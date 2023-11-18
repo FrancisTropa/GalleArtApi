@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import router from '/src/routes/router.js';
-import { PORT } from '/src/configs/environments.js';
-import connectDB from '/src/configs/mongo.js';
+import router from './src/routes/router.js';
+import { PORT } from './src/configs/environments.js';
+import connectDB from './src/configs/mongo.js';
 
 dotenv.config();
 

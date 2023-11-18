@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { MONGO_URI } from "./environments.js"
+import { DATABASE } from "./environments.js"
 
 export default function connectDB() {
-    return mongoose.connect(MONGO_URI).then((success) => {
+    return mongoose.connect(DATABASE).then((success) => {
         console.log("Mongo connected successfully");
         return true;
     }).catch((error) => {
