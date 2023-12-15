@@ -6,11 +6,10 @@ import { SECRET_KEY } from "../configs/environments.js"
 async function register(req, res) {
     try {
         const { name, email, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
             name,
             email,
-            password: hashedPassword,
+            password,
         });
         return res.status(201).send({ response: user });
     } catch (error) {
@@ -28,11 +27,10 @@ async function login(req, res) {
         if (!user) {
             return res.status(404).send({ message: 'Usuario no encontrado' });
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
+        if (password !== user.password) {
             return res.status(401).send({ message: 'Contraseña incorrecta' });
         }
-        const token = generateAccessToken(user.name);
+        const token = generateAccessToken(user);
         return res.status(200).send({ token });
     } catch (error) {
         return res.status(500).send({ error: error.message });
@@ -41,7 +39,7 @@ async function login(req, res) {
 
 async function getUser(req, res) {
     try {
-        const token = req.headers.authorization.split(' ')[1]; // Bearer <token>
+        const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, SECRET_KEY);
         const user = await User.findById(decoded._id);
         if (!user) {
@@ -53,8 +51,8 @@ async function getUser(req, res) {
     }
 }
 
-function generateAccessToken(username) {
-    return jwt.sign(username, SECRET_KEY, { expiresIn: '30d' });
+function generateAccessToken(user) {
+    return jwt.sign({ _id: user._id, name: user.name }, SECRET_KEY, { expiresIn: '30d' });
 }
 
 async function listUsers(req, res) {

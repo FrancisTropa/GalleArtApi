@@ -3,10 +3,13 @@ import express from 'express';
 import router from './src/routes/router.js';
 import { PORT } from './src/configs/environments.js';
 import connectDB from './src/configs/mongo.js';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
