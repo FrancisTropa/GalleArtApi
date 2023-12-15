@@ -7,10 +7,17 @@
 
 ## Get
   - Obtener Usuarios.
+  - Obtener usuario con sesión iniciada
   - Listar Obras.
+  - Listar Comentarios.
+  - Obtener Reacciones.
 
 ## Post
+  - Login.
+  - Registro de usuario.
   - Subir Obra.
+  - Calificar Obra.
+  - Comentar Obra.
 
 ## Delete
   - Eliminar Obra.
