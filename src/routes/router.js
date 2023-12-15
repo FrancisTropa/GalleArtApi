@@ -3,6 +3,7 @@ import { register, login, getUser, listUsers, editProfile } from '../controllers
 import { listArtWorks, createArtWork, deleteArtWork } from '../controllers/artWork.controller.js';
 import { rateArtWork, getRatings } from '../controllers/rating.controller.js';
 import { postComment, listComments } from '../controllers/comment.controller.js';
+import parser from '../Middlewares/middlewares.js';
 
 const router = Router();
 
@@ -13,7 +14,7 @@ router.get('/auth/user', getUser);
 router.get("/artWorks", listArtWorks);
 router.get("/users", listUsers);
 
-router.post("/artWorks", createArtWork);
+router.post("/artWorks", parser.single('image'), createArtWork);
 
 router.delete("/artWorks/:id", deleteArtWork);
 
