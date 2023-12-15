@@ -1,4 +1,61 @@
 import User from '../models/user.model.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { SECRET_KEY } from "../configs/environments.js"
+
+async function register(req, res) {
+    try {
+        const { name, email, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+        });
+        return res.status(201).send({ response: user });
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            return res.status(400).send({ message: 'Por favor, completa todos los campos' });
+        }
+        return res.status(500).send({ error: error.message });
+    }
+}
+
+async function login(req, res) {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).send({ message: 'Usuario no encontrado' });
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).send({ message: 'Contraseña incorrecta' });
+        }
+        const token = generateAccessToken(user.name);
+        return res.status(200).send({ token });
+    } catch (error) {
+        return res.status(500).send({ error: error.message });
+    }
+}
+
+async function getUser(req, res) {
+    try {
+        const token = req.headers.authorization.split(' ')[1]; // Bearer <token>
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const user = await User.findById(decoded._id);
+        if (!user) {
+            return res.status(404).send({ message: 'Usuario no encontrado' });
+        }
+        return res.status(200).send({ user });
+    } catch (error) {
+        return res.status(500).send({ error: error.message });
+    }
+}
+
+function generateAccessToken(username) {
+    return jwt.sign(username, SECRET_KEY, { expiresIn: '30d' });
+}
 
 async function listUsers(req, res) {
     try {
@@ -20,4 +77,4 @@ async function editProfile(req, res) {
     }
 }
 
-export { listUsers, editProfile };
+export { register, login, getUser, listUsers, editProfile };

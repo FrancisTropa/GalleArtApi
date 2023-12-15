@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: false,
+        required: true,
     },
     description: {
         type: String,
@@ -32,6 +32,11 @@ const UserSchema = new mongoose.Schema({
     twitter: {
         type: String,
         required: false,
+    },
+    password: {
+        type: String,
+        required: true,
+        lowercase: true,
     },
 });
 
